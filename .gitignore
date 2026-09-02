@@ -1,0 +1,17 @@
+# dependencias (si se agrega un paso de build)
+node_modules/
+
+# sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# editores
+.vscode/
+.idea/
+
+# Vercel
+.vercel
+
+# temporales
+*.log

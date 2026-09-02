@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#faf5ec"/>
+      <stop offset="1" stop-color="#efe3d0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="800" fill="url(#bg)"/>
+  <!-- rama de café estilizada -->
+  <g stroke="#4b5d3a" stroke-width="6" fill="none" stroke-linecap="round">
+    <path d="M640 620 V210"/>
+    <path d="M640 330 q-70 -30 -110 -90"/>
+    <path d="M640 330 q70 -30 110 -90"/>
+    <path d="M640 430 q-80 -20 -120 -70"/>
+    <path d="M640 430 q80 -20 120 -70"/>
+  </g>
+  <g fill="#8a3b2e">
+    <circle cx="626" cy="250" r="12"/><circle cx="656" cy="252" r="12"/>
+    <circle cx="632" cy="360" r="12"/><circle cx="662" cy="362" r="12"/>
+  </g>
+  <g fill="#c9a24b">
+    <circle cx="612" cy="360" r="11"/><circle cx="612" cy="465" r="11"/>
+  </g>
+  <text x="640" y="700" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="60" fill="#2f2a22" font-style="italic">Le Goûter</text>
+  <text x="640" y="742" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" letter-spacing="4" fill="#8a7f6d">CAFÉ · BOUTIQUE</text>
+</svg>

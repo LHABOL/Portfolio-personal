@@ -22,11 +22,11 @@ portfolio-kaleb-lepe/
 ├── js/
 │   └── script.js          # toda la interactividad
 ├── assets/
-│   ├── cv-kaleb-lepe.pdf   # PLACEHOLDER — reemplazar por el CV real
+│   ├── cv-kaleb-lepe.pdf   # CV real
 │   └── img/
 │       ├── favicon.svg
 │       ├── og-image.svg
-│       ├── profile.svg              # PLACEHOLDER — reemplazar por foto real
+│       ├── profile.png              # foto real (recortada del CV)
 │       ├── jenny-spa.png            # screenshot real
 │       ├── tierra-sana.png          # screenshot real
 │       ├── mirandas-barber-shop.png # screenshot real
@@ -60,8 +60,6 @@ o la extensión *Live Server* de VS Code.
 
 | Elemento | Dónde | Nota |
 |---|---|---|
-| Foto de perfil | `assets/img/profile.svg` | Sustituir por una foto real (`profile.jpg`) y actualizar el `src` en la sección "Sobre mí". |
-| CV | `assets/cv-kaleb-lepe.pdf` | Es un PDF de relleno. Reemplazar por el CV real con el mismo nombre. |
 | LinkedIn / GitHub | `index.html` (secciones Contacto y Footer) | Los `href="#"` son placeholders. Poner las URLs reales. |
 | Screenshot de Le Goûter | `assets/img/le-gouter.svg` | Ver abajo. |
 | Formulario de contacto | `js/script.js` → `setupContactForm()` | Hoy simula el envío. Hay un comentario con el snippet para conectar **Formspree** o **EmailJS**. |

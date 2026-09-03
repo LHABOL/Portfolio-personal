@@ -192,7 +192,7 @@
      Mientras la clave siga siendo el texto de ejemplo, el
      formulario avisa en pantalla y NO finge que envió nada.
      --------------------------------------------------------- */
-  var WEB3FORMS_ACCESS_KEY = 'PEGA-AQUI-TU-ACCESS-KEY';
+  var WEB3FORMS_ACCESS_KEY = 'b27f91b7-7952-48b5-b738-990f76babb34';
   var CONTACT_FALLBACK_EMAIL = 'kalebyeredlepesanchez16@gmail.com';
 
   function setupContactForm() {

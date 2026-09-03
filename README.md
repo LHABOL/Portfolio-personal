@@ -60,25 +60,23 @@ o la extensión *Live Server* de VS Code.
 
 | Elemento | Dónde | Nota |
 |---|---|---|
-| LinkedIn / GitHub | `index.html` (secciones Contacto y Footer) | Los `href="#"` son placeholders. Poner las URLs reales. |
 | Screenshot de Le Goûter | `assets/img/le-gouter.svg` | Ver abajo. |
-| **Clave del formulario de contacto** | `js/script.js` → `WEB3FORMS_ACCESS_KEY` | Ver **"Formulario de contacto"** abajo. Sin la clave, el formulario avisa en pantalla y no envía. |
 | URL del dominio | `index.html`, `robots.txt`, `sitemap.xml` | Cambiar `kaleblepe.vercel.app` por el dominio final. |
+
+Ya configurado: foto y CV reales, correo de contacto, enlaces de LinkedIn y GitHub,
+y la Access Key de Web3Forms del formulario de contacto.
 
 ### Formulario de contacto
 
 El formulario envía los mensajes por **[Web3Forms](https://web3forms.com)** (gratis, 250
-mensajes/mes, sin crear cuenta ni contraseña). Configúralo una sola vez:
+mensajes/mes). La `WEB3FORMS_ACCESS_KEY` en `js/script.js` ya está puesta y los mensajes
+llegan a `kalebyeredlepesanchez16@gmail.com`.
 
-1. Entra a <https://web3forms.com>.
-2. Escribe tu correo (`kalebyeredlepesanchez16@gmail.com`) y pulsa **"Create Access Key"**.
-3. Copia la Access Key que te llega por email.
-4. Pégala en `js/script.js`, en la constante `WEB3FORMS_ACCESS_KEY` (arriba de `setupContactForm`).
-5. Commit + deploy. Listo: los mensajes llegan a ese correo.
-
-Mientras la clave siga como `PEGA-AQUI-TU-ACCESS-KEY`, el formulario muestra un aviso
-honesto y no finge el envío. Si el POST falla, ofrece un enlace `mailto:` como respaldo.
-Incluye un honeypot (`botcheck`) contra spam.
+Para cambiarla en el futuro: consigue otra clave en <https://web3forms.com> (solo pide el
+correo, sin cuenta) y reemplaza la constante `WEB3FORMS_ACCESS_KEY` (arriba de
+`setupContactForm`). Si la clave se borra, el formulario muestra un aviso honesto y no
+finge el envío; si el POST falla, ofrece un enlace `mailto:` como respaldo. Incluye un
+honeypot (`botcheck`) contra spam.
 
 ### Screenshots de proyectos
 

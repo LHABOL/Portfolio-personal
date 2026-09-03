@@ -62,8 +62,23 @@ o la extensión *Live Server* de VS Code.
 |---|---|---|
 | LinkedIn / GitHub | `index.html` (secciones Contacto y Footer) | Los `href="#"` son placeholders. Poner las URLs reales. |
 | Screenshot de Le Goûter | `assets/img/le-gouter.svg` | Ver abajo. |
-| Formulario de contacto | `js/script.js` → `setupContactForm()` | Hoy simula el envío. Hay un comentario con el snippet para conectar **Formspree** o **EmailJS**. |
+| **Clave del formulario de contacto** | `js/script.js` → `WEB3FORMS_ACCESS_KEY` | Ver **"Formulario de contacto"** abajo. Sin la clave, el formulario avisa en pantalla y no envía. |
 | URL del dominio | `index.html`, `robots.txt`, `sitemap.xml` | Cambiar `kaleblepe.vercel.app` por el dominio final. |
+
+### Formulario de contacto
+
+El formulario envía los mensajes por **[Web3Forms](https://web3forms.com)** (gratis, 250
+mensajes/mes, sin crear cuenta ni contraseña). Configúralo una sola vez:
+
+1. Entra a <https://web3forms.com>.
+2. Escribe tu correo (`kalebyeredlepesanchez16@gmail.com`) y pulsa **"Create Access Key"**.
+3. Copia la Access Key que te llega por email.
+4. Pégala en `js/script.js`, en la constante `WEB3FORMS_ACCESS_KEY` (arriba de `setupContactForm`).
+5. Commit + deploy. Listo: los mensajes llegan a ese correo.
+
+Mientras la clave siga como `PEGA-AQUI-TU-ACCESS-KEY`, el formulario muestra un aviso
+honesto y no finge el envío. Si el POST falla, ofrece un enlace `mailto:` como respaldo.
+Incluye un honeypot (`botcheck`) contra spam.
 
 ### Screenshots de proyectos
 
@@ -110,5 +125,5 @@ El Play CDN muestra un aviso en consola en producción. Para eliminarlo:
 - Scroll suave en enlaces internos + header con sombra al hacer scroll.
 - Efecto de escritura en la terminal del hero.
 - Animaciones fade/slide al entrar en viewport (`IntersectionObserver`).
-- Validación en vivo + estado de éxito en el formulario de contacto.
+- Validación en vivo + envío real del formulario por Web3Forms (con estados de carga, éxito y error, y respaldo `mailto:`).
 - Año dinámico en el footer.

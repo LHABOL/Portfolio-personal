@@ -6,7 +6,7 @@
    - Header con sombra al hacer scroll
    - Efecto de escritura en la terminal del hero
    - Animaciones al entrar en viewport (IntersectionObserver)
-   - Validación y estado de envío del formulario de contacto
+   - Validación y envío real del formulario de contacto (Web3Forms)
    - Año dinámico en el footer
    ========================================================= */
 
@@ -178,15 +178,34 @@
   }
 
   /* ---------------------------------------------------------
-     Formulario de contacto: validación + estado de envío
-     Preparado para conectar con Formspree / EmailJS
+     Formulario de contacto — envío real por Web3Forms
+     ---------------------------------------------------------
+     Web3Forms (https://web3forms.com) es gratis y NO requiere
+     crear cuenta ni contraseña:
+
+       1. Entra a https://web3forms.com
+       2. Escribe tu correo (kalebyeredlepesanchez16@gmail.com)
+       3. Pulsa "Create Access Key"
+       4. Copia la clave que te llega por email
+       5. Pégala abajo en WEB3FORMS_ACCESS_KEY
+
+     Mientras la clave siga siendo el texto de ejemplo, el
+     formulario avisa en pantalla y NO finge que envió nada.
      --------------------------------------------------------- */
+  var WEB3FORMS_ACCESS_KEY = 'PEGA-AQUI-TU-ACCESS-KEY';
+  var CONTACT_FALLBACK_EMAIL = 'kalebyeredlepesanchez16@gmail.com';
+
   function setupContactForm() {
     const form = document.getElementById('contact-form');
     if (!form) return;
 
     const btn = document.getElementById('submit-btn');
     const label = document.getElementById('submit-label');
+    const statusEl = document.getElementById('form-status');
+    const keyReady =
+      typeof WEB3FORMS_ACCESS_KEY === 'string' &&
+      WEB3FORMS_ACCESS_KEY.length > 20 &&
+      !/PEGA-AQUI/i.test(WEB3FORMS_ACCESS_KEY);
 
     const validators = {
       name: function (v) {
@@ -231,8 +250,40 @@
       });
     });
 
+    function setStatus(msg, kind) {
+      if (!statusEl) return;
+      if (!msg) {
+        statusEl.hidden = true;
+        statusEl.textContent = '';
+        statusEl.className = 'form-status';
+        return;
+      }
+      statusEl.hidden = false;
+      statusEl.className = 'form-status' + (kind ? ' form-status--' + kind : '');
+      statusEl.textContent = msg;
+    }
+
+    function resetButton() {
+      btn.classList.remove('is-success', 'is-error');
+      btn.disabled = false;
+      label.textContent = 'Enviar mensaje';
+    }
+
+    function mailtoFallback(data) {
+      const body = data.message + '\n\n— ' + data.name + ' (' + data.email + ')';
+      return (
+        'mailto:' +
+        CONTACT_FALLBACK_EMAIL +
+        '?subject=' +
+        encodeURIComponent('Contacto desde el portfolio') +
+        '&body=' +
+        encodeURIComponent(body)
+      );
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      setStatus('');
 
       let valid = true;
       Object.keys(validators).forEach(function (field) {
@@ -245,31 +296,88 @@
         return;
       }
 
-      // --- Simulación de envío (frontend) ---
-      // Para producción, reemplazar este bloque por una llamada real:
-      //
-      //   fetch('https://formspree.io/f/TU_ID', {
-      //     method: 'POST',
-      //     headers: { 'Accept': 'application/json' },
-      //     body: new FormData(form),
-      //   }).then(...)
-      //
-      // o EmailJS: emailjs.sendForm('service_id', 'template_id', form)
+      // Honeypot: si un bot marcó la casilla oculta, cortamos en silencio.
+      if (form.elements.botcheck && form.elements.botcheck.checked) return;
+
+      const data = {
+        name: form.elements.name.value.trim(),
+        email: form.elements.email.value.trim(),
+        message: form.elements.message.value.trim(),
+      };
+
+      // Sin clave configurada: avisamos con honestidad, no fingimos el envío.
+      if (!keyReady) {
+        console.warn(
+          '[Portfolio] El formulario no está conectado todavía. ' +
+            'Consigue una Access Key gratis en https://web3forms.com y pégala ' +
+            'en WEB3FORMS_ACCESS_KEY (js/script.js).'
+        );
+        btn.classList.add('is-error');
+        label.textContent = 'Formulario sin conectar';
+        setStatus(
+          'El formulario aún no está conectado. Mientras tanto, escríbeme a ' +
+            CONTACT_FALLBACK_EMAIL + '.',
+          'error'
+        );
+        setTimeout(resetButton, 4500);
+        return;
+      }
 
       btn.disabled = true;
+      btn.classList.remove('is-error');
       label.textContent = 'Enviando...';
 
-      setTimeout(function () {
-        btn.classList.add('is-success');
-        label.textContent = '¡Mensaje enviado! ✓';
-        form.reset();
-
-        setTimeout(function () {
-          btn.classList.remove('is-success');
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: 'Nuevo mensaje de ' + data.name + ' — Portfolio',
+          from_name: 'Portfolio Kaleb Lepe',
+          name: data.name,
+          email: data.email,
+          message: data.message,
+        }),
+      })
+        .then(function (res) {
+          return res.json().catch(function () {
+            return {};
+          });
+        })
+        .then(function (json) {
+          if (!json || !json.success) {
+            throw new Error((json && json.message) || 'Respuesta no válida');
+          }
+          btn.classList.add('is-success');
+          label.textContent = '¡Mensaje enviado! ✓';
+          setStatus('Gracias, te responderé pronto.', 'ok');
+          form.reset();
+          setTimeout(function () {
+            resetButton();
+            setStatus('');
+          }, 4500);
+        })
+        .catch(function (err) {
+          console.error('[Portfolio] Error al enviar el formulario:', err);
           btn.disabled = false;
-          label.textContent = 'Enviar mensaje';
-        }, 3500);
-      }, 900);
+          btn.classList.add('is-error');
+          label.textContent = 'No se pudo enviar';
+          if (statusEl) {
+            statusEl.hidden = false;
+            statusEl.className = 'form-status form-status--error';
+            statusEl.innerHTML =
+              'No se pudo enviar. <a class="underline" href="' +
+              mailtoFallback(data) +
+              '">Escríbeme por correo</a> o inténtalo de nuevo.';
+          }
+          setTimeout(function () {
+            resetButton();
+            setStatus('');
+          }, 7000);
+        });
     });
   }
 

@@ -1,0 +1,61 @@
+name: Actualizar previews de proyectos
+
+# Regenera assets/img/*.png a partir de los sitios en producción.
+# Si alguna imagen cambió, hace commit -> Vercel redespliega el portfolio.
+on:
+  workflow_dispatch: {}            # botón "Run workflow" en la pestaña Actions
+  schedule:
+    - cron: "0 */6 * * *"          # cada 6 horas
+  repository_dispatch:
+    types: [refresh-screenshots]   # disparo externo (ver README)
+
+# Evita que dos ejecuciones se pisen.
+concurrency:
+  group: screenshots
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Instalar Chromium para Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Capturar screenshots
+        id: shots
+        continue-on-error: true
+        env:
+          CI: "1"
+        run: node scripts/screenshots.mjs
+
+      - name: Commit si hay cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/img
+          if git diff --staged --quiet; then
+            echo "Sin cambios en las previews."
+          else
+            git commit -m "chore: refresca previews de proyectos"
+            git push
+            echo "Previews actualizadas y publicadas."
+          fi
+
+      - name: Fallar si alguna captura falló
+        if: steps.shots.outcome == 'failure'
+        run: |
+          echo "::error::Al menos un sitio no se pudo capturar. Revisa el log de 'Capturar screenshots'."
+          exit 1

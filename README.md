@@ -1,7 +1,8 @@
 # Portfolio — Kaleb Lepe
 
-Portfolio personal de **Kaleb Lepe**: ingeniero de procesos en Grupo SLI y desarrollador web front-end.
-Sitio de una sola página, **100% estático**, sin backend y sin paso de build.
+Portfolio personal de **Kaleb Lepe**: ingeniero de procesos y desarrollador web freelance.
+Sitio de una sola página, **100% estático**, sin backend y sin paso de build. Node se usa
+solo (y opcionalmente) para regenerar las previews de los proyectos.
 
 ## Stack
 
@@ -16,26 +17,19 @@ Sitio de una sola página, **100% estático**, sin backend y sin paso de build.
 
 ```
 portfolio-kaleb-lepe/
-├── index.html            # todo el markup, dividido por secciones comentadas
-├── css/
-│   └── style.css          # estilos propios que complementan a Tailwind
-├── js/
-│   └── script.js          # toda la interactividad
+├── index.html                # todo el markup, dividido por secciones comentadas
+├── css/style.css             # estilos propios que complementan a Tailwind
+├── js/script.js              # toda la interactividad
 ├── assets/
-│   ├── cv-kaleb-lepe.pdf   # CV real
+│   ├── cv-kaleb-lepe.pdf      # CV real
 │   └── img/
-│       ├── favicon.svg
-│       ├── og-image.svg
-│       ├── profile.png              # foto real (recortada del CV)
-│       ├── jenny-spa.png            # screenshot real
-│       ├── tierra-sana.png          # screenshot real
-│       ├── mirandas-barber-shop.png # screenshot real
-│       ├── galu-papeleria.png       # screenshot real
-│       ├── trapillo-shop.png        # screenshot real
-│       └── le-gouter.svg            # placeholder (el sitio tiene intro con scroll-jacking; ver abajo)
-├── robots.txt
-├── sitemap.xml
-└── vercel.json
+│       ├── favicon.svg  ·  og-image.svg
+│       ├── profile.png                # foto real (recortada del CV)
+│       └── <slug>.jpg                 # 1 preview por proyecto (se regeneran solas, ver abajo)
+├── scripts/screenshots.mjs   # regenera las previews con Playwright
+├── .github/workflows/screenshots.yml  # las regenera en automático (cron + manual)
+├── package.json              # devDependency: playwright (solo para las previews)
+├── robots.txt  ·  sitemap.xml  ·  vercel.json
 ```
 
 ## Desarrollo local
@@ -60,11 +54,11 @@ o la extensión *Live Server* de VS Code.
 
 | Elemento | Dónde | Nota |
 |---|---|---|
-| Screenshot de Le Goûter | `assets/img/le-gouter.svg` | Ver abajo. |
 | URL del dominio | `index.html`, `robots.txt`, `sitemap.xml` | Cambiar `kaleblepe.vercel.app` por el dominio final. |
 
 Ya configurado: foto y CV reales, correo de contacto, enlaces de LinkedIn y GitHub,
-y la Access Key de Web3Forms del formulario de contacto.
+la Access Key de Web3Forms del formulario, y las 6 previews de proyectos (reales y
+con actualización automática).
 
 ### Formulario de contacto
 
@@ -78,30 +72,71 @@ correo, sin cuenta) y reemplaza la constante `WEB3FORMS_ACCESS_KEY` (arriba de
 finge el envío; si el POST falla, ofrece un enlace `mailto:` como respaldo. Incluye un
 honeypot (`botcheck`) contra spam.
 
-### Screenshots de proyectos
+## Previews de proyectos — actualización automática
 
-5 de los 6 previews son capturas reales tomadas con Chrome headless
-(`chrome --headless --screenshot`, viewport 1280×800).
+Las 6 imágenes de `assets/img/<slug>.jpg` son **capturas reales** de cada sitio en
+producción, hechas con Playwright (`scripts/screenshots.mjs`), viewport 1280×800 @1.5x
+y guardadas como JPEG ligero (~35–260 KB cada una).
+El script espera a que la red quede inactiva y a que terminen las animaciones de
+entrada; para los sitios con intro *scroll-jacking* (Le Goûter, Trapillo) hace scroll
+real y captura una sección representativa.
 
-**Le Goûter** usa una animación de intro con *scroll-jacking* que impide capturarla
-de forma automática, así que su tarjeta usa un placeholder SVG con la identidad del sitio.
-Para reemplazarlo: entra a https://le-gouter-cafe.vercel.app/, pasa la intro,
-toma una captura del hero real y guárdala como `assets/img/le-gouter.png`,
-luego cambia la extensión en el `<img>` correspondiente de `index.html`.
+### Cómo se mantiene al día solo
 
-Para regenerar cualquier screenshot:
+`.github/workflows/screenshots.yml` corre en GitHub Actions:
+
+- **Cada 6 horas** (cron) y también con el botón **"Run workflow"** en la pestaña
+  *Actions → Actualizar previews de proyectos* (para verlo reflejado al instante).
+- Si alguna imagen cambió respecto a la que está en git, hace commit. Vercel detecta
+  el push y **redespliega el portfolio automáticamente**.
+
+Así, cuando modificas uno de tus sitios, el portfolio se actualiza en la siguiente
+corrida (o en cuanto pulsas "Run workflow").
+
+### Regenerar en local
 
 ```bash
-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars \
-  --window-size=1280,800 --virtual-time-budget=25000 \
-  --screenshot=assets/img/<nombre>.png "https://<url-del-sitio>/"
+npm install
+npx playwright install chromium
+npm run screenshots        # escribe en assets/img/
 ```
+
+Para añadir o cambiar un proyecto, edita el array `SITES` de `scripts/screenshots.mjs`
+(y la tarjeta correspondiente en `index.html`).
+
+### Opcional: actualización *al instante* al hacer push a un proyecto
+
+Para que el portfolio se refresque en el momento en que publicas un cambio en un sitio
+(sin esperar al cron), añade a **cada repo de proyecto** un workflow que dispare este:
+
+```yaml
+# .github/workflows/avisar-portfolio.yml  (en el repo del proyecto)
+name: Avisar al portfolio
+on:
+  push:
+    branches: [main]
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -sf -X POST \
+            -H "Authorization: Bearer ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/LHABOL/Portfolio-personal/dispatches \
+            -d '{"event_type":"refresh-screenshots"}'
+```
+
+`PORTFOLIO_DISPATCH_TOKEN` es un *fine-grained PAT* con permiso **Contents: read and
+write** (o **Actions: write**) sobre `LHABOL/Portfolio-personal`, guardado como secret
+en cada repo de proyecto. El workflow del portfolio ya escucha el evento
+`refresh-screenshots`.
 
 ## Pasar Tailwind a un build real (opcional)
 
 El Play CDN muestra un aviso en consola en producción. Para eliminarlo:
 
-1. `npm init -y && npm i -D tailwindcss`
+1. `npm i -D tailwindcss`
 2. Mueve la config inline de `index.html` a `tailwind.config.js`.
 3. Crea `src/input.css` con las directivas `@tailwind base; @tailwind components; @tailwind utilities;`
    (más el contenido actual de `css/style.css`).

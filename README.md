@@ -57,7 +57,7 @@ o la extensión *Live Server* de VS Code.
 | URL del dominio | `index.html`, `robots.txt`, `sitemap.xml` | Cambiar `kaleblepe.vercel.app` por el dominio final. |
 
 Ya configurado: foto y CV reales, correo de contacto, enlaces de LinkedIn y GitHub,
-la Access Key de Web3Forms del formulario, y las 6 previews de proyectos (reales y
+la Access Key de Web3Forms del formulario, y las 7 previews de proyectos (reales y
 con actualización automática).
 
 ### Formulario de contacto
@@ -74,7 +74,7 @@ honeypot (`botcheck`) contra spam.
 
 ## Previews de proyectos — actualización automática
 
-Las 6 imágenes de `assets/img/<slug>.jpg` son **capturas reales** de cada sitio en
+Las 7 imágenes de `assets/img/<slug>.jpg` son **capturas reales** de cada sitio en
 producción, hechas con Playwright (`scripts/screenshots.mjs`), viewport 1280×800 @1.5x
 y guardadas como JPEG ligero (~35–260 KB cada una).
 El script espera a que la red quede inactiva y a que terminen las animaciones de

@@ -46,6 +46,7 @@ const SITES = [
   { slug: 'le-gouter',            url: 'https://le-gouter-cafe.vercel.app/',          settle: 4000, unlock: true, scrollFrac: 0.17 },
   { slug: 'galu-papeleria',       url: 'https://galu-papeleria.vercel.app/',          settle: 7000 },
   { slug: 'trapillo-shop',        url: 'https://trapillo-shop.vercel.app/',           settle: 3500, unlock: true, scrollFrac: 0.13 },
+  { slug: 'esco-pq',              url: 'https://www.esco-pq.com/',                    settle: 4000 },
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

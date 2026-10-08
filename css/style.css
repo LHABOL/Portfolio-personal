@@ -317,6 +317,29 @@ body {
 .project-card:hover .project-thumb img {
   transform: scale(1.05);
 }
+
+/* Hover "en el aire": la tarjeta se eleva y tiembla ligeramente, como si se sostuviera en la mano.
+   Se declara con .reveal.in-view para ganarle en especificidad al transform del scroll-reveal. */
+@media (hover: hover) {
+  .project-card.reveal.in-view:hover {
+    z-index: 1;
+    will-change: transform;
+    box-shadow: 0 42px 70px -18px rgba(15, 23, 42, 0.35);
+    animation: card-hold 0.42s ease-in-out infinite;
+  }
+  .dark .project-card.reveal.in-view:hover {
+    box-shadow: 0 42px 70px -18px rgba(37, 99, 235, 0.45);
+  }
+}
+@keyframes card-hold {
+  0%   { transform: translate(0, -14px) rotate(0deg) scale(1.03); }
+  15%  { transform: translate(-2px, -16px) rotate(-0.6deg) scale(1.03); }
+  30%  { transform: translate(2px, -12px) rotate(0.5deg) scale(1.03); }
+  45%  { transform: translate(-1px, -15px) rotate(0.35deg) scale(1.03); }
+  60%  { transform: translate(2px, -13px) rotate(-0.5deg) scale(1.03); }
+  80%  { transform: translate(-2px, -16px) rotate(0.3deg) scale(1.03); }
+  100% { transform: translate(0, -14px) rotate(0deg) scale(1.03); }
+}
 .project-title {
   font-size: 1.1rem;
   font-weight: 700;

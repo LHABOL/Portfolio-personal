@@ -30,9 +30,8 @@
   <script>
     (function () {
       try {
-        var stored = localStorage.getItem('theme');
-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (stored === 'dark' || (!stored && prefersDark)) {
+        // Modo oscuro por defecto; solo pasa a claro si el usuario lo eligió con el botón
+        if (localStorage.getItem('theme') !== 'light') {
           document.documentElement.classList.add('dark');
         }
       } catch (e) {}

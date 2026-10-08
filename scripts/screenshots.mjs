@@ -40,10 +40,7 @@ const SCALE = 1.5; // nitidez en pantallas retina sin archivos enormes
 const JPEG_QUALITY = 80; // las previews se guardan como .jpg (ligeras)
 
 const SITES = [
-  { slug: 'jenny-spa',            url: 'https://jenny-spa-web.vercel.app/',          settle: 9000 },
   { slug: 'tierra-sana',          url: 'https://tierra-sana.vercel.app/',            settle: 6000 },
-  { slug: 'mirandas-barber-shop', url: 'https://mirandas-barber-shop.vercel.app/',   settle: 5000 },
-  { slug: 'le-gouter',            url: 'https://le-gouter-cafe.vercel.app/',          settle: 4000, unlock: true, scrollFrac: 0.17 },
   { slug: 'galu-papeleria',       url: 'https://galu-papeleria.vercel.app/',          settle: 7000 },
   { slug: 'trapillo-shop',        url: 'https://trapillo-shop.vercel.app/',           settle: 3500, unlock: true, scrollFrac: 0.13 },
   { slug: 'esco-pq',              url: 'https://www.esco-pq.com/',                    settle: 4000 },

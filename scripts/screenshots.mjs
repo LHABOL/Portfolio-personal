@@ -45,6 +45,7 @@ const SITES = [
   { slug: 'trapillo-shop',        url: 'https://trapillo-shop.vercel.app/',           settle: 3500, unlock: true, scrollFrac: 0.13 },
   { slug: 'esco-pq',              url: 'https://www.esco-pq.com/',                    settle: 4000 },
   { slug: 'refaccionarias',       url: 'https://refaccionaria-alpha.vercel.app/',     settle: 4000 },
+  { slug: 'carmex',               url: 'https://taller-mecanico-two-beta.vercel.app/', settle: 4000 },
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
